@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Awesome-pyecharts</title>
-                <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts.min.js"></script>
-            <script type="text/javascript" src="https://assets.pyecharts.org/assets/v5/echarts-gl.min.js"></script>
+            <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+        <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts-gl.min.js"></script>
 
 </head>
-<body >
-    <div id="3381d5834bbc4f6e8a96fd8863a12e8e" class="chart-container" style="width:900px; height:500px; "></div>
+<body>
+    <div id="4d1c552dbe8f493f8e6f948d9ae57bb1" class="chart-container" style="width:900px; height:500px;"></div>
     <script>
-        var chart_3381d5834bbc4f6e8a96fd8863a12e8e = echarts.init(
-            document.getElementById('3381d5834bbc4f6e8a96fd8863a12e8e'), 'white', {renderer: 'canvas'});
-        var option_3381d5834bbc4f6e8a96fd8863a12e8e = {
+        var chart_4d1c552dbe8f493f8e6f948d9ae57bb1 = echarts.init(
+            document.getElementById('4d1c552dbe8f493f8e6f948d9ae57bb1'), 'white', {renderer: 'canvas'});
+        var option_4d1c552dbe8f493f8e6f948d9ae57bb1 = {
     "animation": true,
     "animationThreshold": 2000,
     "animationDuration": 1000,
@@ -21,19 +21,31 @@
     "animationDurationUpdate": 300,
     "animationEasingUpdate": "cubicOut",
     "animationDelayUpdate": 0,
-    "aria": {
-        "enabled": false
-    },
     "color": [
-        "#5470c6",
-        "#91cc75",
-        "#fac858",
-        "#ee6666",
-        "#73c0de",
-        "#3ba272",
-        "#fc8452",
-        "#9a60b4",
-        "#ea7ccc"
+        "#c23531",
+        "#2f4554",
+        "#61a0a8",
+        "#d48265",
+        "#749f83",
+        "#ca8622",
+        "#bda29a",
+        "#6e7074",
+        "#546570",
+        "#c4ccd3",
+        "#f05b72",
+        "#ef5b9c",
+        "#f47920",
+        "#905a3d",
+        "#fab27b",
+        "#2a5caa",
+        "#444693",
+        "#726930",
+        "#b2d235",
+        "#6d8346",
+        "#ac6767",
+        "#1d953f",
+        "#6950a1",
+        "#918597"
     ],
     "series": [
         {
@@ -18292,9 +18304,9 @@
             ],
             "label": {
                 "show": false,
+                "position": "top",
                 "margin": 8
-            },
-            "grid3DIndex": 0
+            }
         }
     ],
     "legend": [
@@ -18307,22 +18319,7 @@
             "padding": 5,
             "itemGap": 10,
             "itemWidth": 25,
-            "itemHeight": 14,
-            "backgroundColor": "transparent",
-            "borderColor": "#ccc",
-            "borderWidth": 1,
-            "borderRadius": 0,
-            "pageButtonItemGap": 5,
-            "pageButtonPosition": "end",
-            "pageFormatter": "{current}/{total}",
-            "pageIconColor": "#2f4554",
-            "pageIconInactiveColor": "#aaa",
-            "pageIconSize": 15,
-            "animationDurationUpdate": 800,
-            "selector": false,
-            "selectorPosition": "auto",
-            "selectorItemGap": 7,
-            "selectorButtonGap": 10
+            "itemHeight": 14
         }
     ],
     "tooltip": {
@@ -18336,16 +18333,32 @@
         "alwaysShowContent": false,
         "showDelay": 0,
         "hideDelay": 100,
-        "enterable": false,
-        "confine": false,
-        "appendToBody": false,
-        "transitionDuration": 0.4,
         "textStyle": {
             "fontSize": 14
         },
         "borderWidth": 0,
-        "padding": 5,
-        "order": "seriesAsc"
+        "padding": 5
+    },
+    "visualMap": {
+        "show": true,
+        "type": "continuous",
+        "min": 0,
+        "max": 20,
+        "inRange": {
+            "color": [
+                "#50a3ba",
+                "#eac763",
+                "#d94e5d"
+            ]
+        },
+        "calculable": true,
+        "inverse": false,
+        "splitNumber": 5,
+        "orient": "vertical",
+        "showLabel": true,
+        "itemWidth": 20,
+        "itemHeight": 140,
+        "borderWidth": 0
     },
     "xAxis3D": {
         "data": [
@@ -18715,21 +18728,10 @@
             "12-30",
             "12-31"
         ],
-        "show": true,
-        "scale": false,
-        "grid3DIndex": 0,
         "nameGap": 20,
-        "logBase": 10,
         "type": "category",
-        "splitLine": {
-            "show": true,
-            "lineStyle": {
-                "show": true,
-                "width": 1,
-                "opacity": 1,
-                "curveness": 0,
-                "type": "solid"
-            }
+        "axisLabel": {
+            "margin": 8
         }
     },
     "yAxis3D": {
@@ -18745,109 +18747,38 @@
             1988,
             1989
         ],
-        "show": true,
-        "scale": false,
-        "grid3DIndex": 0,
         "nameGap": 20,
-        "logBase": 10,
         "type": "category",
-        "splitLine": {
-            "show": true,
-            "lineStyle": {
-                "show": true,
-                "width": 1,
-                "opacity": 1,
-                "curveness": 0,
-                "type": "solid"
-            }
+        "axisLabel": {
+            "margin": 8
         }
     },
     "zAxis3D": {
-        "show": true,
-        "scale": false,
-        "grid3DIndex": 0,
         "nameGap": 20,
-        "logBase": 10,
         "type": "value",
-        "splitLine": {
-            "show": true,
-            "lineStyle": {
-                "show": true,
-                "width": 1,
-                "opacity": 1,
-                "curveness": 0,
-                "type": "solid"
-            }
+        "axisLabel": {
+            "margin": 8
         }
     },
     "grid3D": {
         "boxWidth": 200,
         "boxHeight": 100,
         "boxDepth": 80,
-        "splitLine": {
-            "show": true,
-            "lineStyle": {
-                "show": true,
-                "width": 1,
-                "opacity": 1,
-                "curveness": 0,
-                "type": "solid"
-            }
-        },
-        "environment": "auto",
         "viewControl": {
             "autoRotate": false,
             "autoRotateSpeed": 10,
-            "rotateSensitivity": 1,
-            "alpha": 20,
-            "beta": 40,
-            "minAlpha": -90,
-            "maxAlpha": 90
-        },
-        "zlevel": -10,
-        "left": "auto",
-        "top": "auto",
-        "right": "auto",
-        "bottom": "auto"
+            "rotateSensitivity": 1
+        }
     },
     "title": [
         {
-            "show": true,
             "text": "Daily minimum temperatures in Melbourne, Australia, 1981-1990",
-            "target": "blank",
-            "subtarget": "blank",
             "padding": 5,
-            "itemGap": 10,
-            "textAlign": "auto",
-            "textVerticalAlign": "auto",
-            "triggerEvent": false
+            "itemGap": 10
         }
-    ],
-    "visualMap": {
-        "show": true,
-        "type": "continuous",
-        "min": 0,
-        "max": 20,
-        "inRange": {
-            "color": [
-                "#50a3ba",
-                "#eac763",
-                "#d94e5d"
-            ]
-        },
-        "calculable": true,
-        "inverse": false,
-        "splitNumber": 5,
-        "hoverLink": true,
-        "orient": "vertical",
-        "padding": 5,
-        "showLabel": true,
-        "itemWidth": 20,
-        "itemHeight": 140,
-        "borderWidth": 0
-    }
+    ]
 };
-        chart_3381d5834bbc4f6e8a96fd8863a12e8e.setOption(option_3381d5834bbc4f6e8a96fd8863a12e8e);
+        chart_4d1c552dbe8f493f8e6f948d9ae57bb1.setOption(option_4d1c552dbe8f493f8e6f948d9ae57bb1);
     </script>
 </body>
 </html>

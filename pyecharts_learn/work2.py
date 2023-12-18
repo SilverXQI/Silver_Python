@@ -1,8 +1,6 @@
-import random
 from pyecharts import options as opts
 from pyecharts.charts import Bar3D
 
-data = [(i, j, random.randint(0, 12)) for i in range(6) for j in range(24)]
 with open("daily-minimum-temperatures-in-me.csv", "r") as f:
     data = f.read()
 data = data.split('\n')
@@ -15,6 +13,7 @@ for i in range(len(data)):
 time = []
 for i in range(365):
     time.append(data[i][0][1] + '-' + data[i][0][2])
+print(time)
 c = (
     Bar3D()
     .add(
