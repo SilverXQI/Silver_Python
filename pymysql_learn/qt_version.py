@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtGui import QPalette
+from PyQt5.QtGui import QPalette, QIcon
 from PyQt5.QtWidgets import *
 from pymysql import Connection
 
@@ -128,7 +128,7 @@ class MainApp(QMainWindow):
 
         # 设置窗口标题和大小
         self.setWindowTitle('学生管理系统')
-        self.setGeometry(300, 300, 750, 600)
+        self.setGeometry(500, 200, 750, 700)
         self.show()
 
 
@@ -142,7 +142,7 @@ class EnterStudentInfoWindow(QWidget):
 
     def initUI(self):
         layout = QVBoxLayout()
-
+        self.setWindowIcon(QIcon('icon.png'))
         self.sidInput = QLineEdit(self)
         self.snameInput = QLineEdit(self)
         self.ssexInput = QLineEdit(self)
@@ -229,6 +229,7 @@ class SearchStudentInfoWindow(QWidget):
         self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         # 创建文本编辑器
         self.resultsTextEdit = QTextEdit(self)
+
         self.resultsTextEdit.setReadOnly(True)  # 设置为只读，不允许用户编辑
         layout.addWidget(self.resultsTextEdit)  # 将文本编辑器添加到布局中
         self.setLayout(layout)
@@ -248,11 +249,11 @@ class SearchStudentInfoWindow(QWidget):
         conn.select_db(DataBase)
         sid = self.sidInput.text()
         try:
-            # 使用参数化查询来提高安全性
             sql = "select * from Student where Sid = '%s'" % sid
             cursor.execute(sql)
             result = cursor.fetchall()
             self.displayResults(result)
+            self.sidInput.clear()
             print(result)
         except Exception as e:
             print("查询失败:", e)
@@ -362,7 +363,6 @@ class QueryStudentCoursesWindow(QWidget):
         layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
-        # self.show()
 
     def searchStudent(self):
         conn = Connection(
@@ -619,6 +619,9 @@ class QueryStudentExpulsionWindow(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setStyleSheet("""
+        QMainWindow{
+            background-color: #73AFEC; 
+        }
         QPushButton {
             background-color: #4CAF50; 
             color: white; 
@@ -644,11 +647,27 @@ if __name__ == '__main__':
             font-family: "kaiti";
         }
         QLineEdit {
-            font-size: 14px;
+            padding:5px 5px;
+            margin:5px 5px;
+            font-size: 20px;
             background-color: rgba(245, 206, 244, 0.3);
         }
+        QTableWidget {
+            font-size: 14px;
+            background-color: rgba(254, 135, 135, 0.3);
+            font-family: "youyuan";
+        }
+        QTextEdit {
+            background-color: #f0f0f0; /* 背景色 */
+            color: #333;              /* 文本颜色 */
+            border: 1px solid #ddd;   /* 边框 */
+            font-family: 'youyuan';       /* 字体 */
+            font-size: 27px;          /* 字体大小 */
+            border: 1px solid #888888;
+            border-radius: 5px; /* 圆角边框 */
+        }
     """)
-
+    app.setWindowIcon(QIcon('icon.jpg'))
     main_app = MainApp()
     main_app.show()
     sys.exit(app.exec_())
