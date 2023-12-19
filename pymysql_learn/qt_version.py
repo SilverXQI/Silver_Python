@@ -1,5 +1,6 @@
 import sys
 
+from PyQt5.QtGui import QPalette
 from PyQt5.QtWidgets import *
 from pymysql import Connection
 
@@ -68,6 +69,7 @@ class MainApp(QMainWindow):
         # 创建 QStackedWidget
         self.stackedWidget = QStackedWidget(self)
         self.setCentralWidget(self.stackedWidget)
+        # self.setBackgroundRole(QPalette.Dark)
 
         # 创建每个功能的小部件
         self.enterStudentInfoWidget = EnterStudentInfoWindow()
@@ -149,15 +151,15 @@ class EnterStudentInfoWindow(QWidget):
         submitButton = QPushButton('录入学生信息', self)
         self.back_button = QPushButton('退出', self)
 
-        layout.addWidget(QLabel('学号'))
+        layout.addWidget(QLabel('学号:'))
         layout.addWidget(self.sidInput)
-        layout.addWidget(QLabel('姓名'))
+        layout.addWidget(QLabel('姓名:'))
         layout.addWidget(self.snameInput)
-        layout.addWidget(QLabel('性别'))
+        layout.addWidget(QLabel('性别:'))
         layout.addWidget(self.ssexInput)
-        layout.addWidget(QLabel('年龄'))
+        layout.addWidget(QLabel('年龄:'))
         layout.addWidget(self.sageInput)
-        layout.addWidget(QLabel('专业'))
+        layout.addWidget(QLabel('专业:'))
         layout.addWidget(self.sdeptInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
@@ -616,6 +618,37 @@ class QueryStudentExpulsionWindow(QWidget):
 # 主程序入口
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+    app.setStyleSheet("""
+        QPushButton {
+            background-color: #4CAF50; 
+            color: white; 
+            border: none; 
+            padding: 15px 30px; 
+            text-align: center; 
+            text-decoration: none; 
+            display: inline-block; 
+            font-size: 16px; 
+            font-family: "Microsoft YaHei";
+            margin: 4px 2px; 
+            cursor: pointer; 
+            border-radius: 10px;
+        }
+        QPushButton:hover {
+            background-color: #45a029;
+        }
+        QLabel {
+            padding: 5px 5px;
+            font-size: 20px;
+            background-color: rgba(152, 247, 235, 0.3);
+            font-weight: bold;
+            font-family: "kaiti";
+        }
+        QLineEdit {
+            font-size: 14px;
+            background-color: rgba(245, 206, 244, 0.3);
+        }
+    """)
+
     main_app = MainApp()
     main_app.show()
     sys.exit(app.exec_())

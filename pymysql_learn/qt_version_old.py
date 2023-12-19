@@ -96,43 +96,36 @@ class MainApp(QMainWindow):
 
     # 下面定义所有功能按钮的槽函数
     def enter_student_info(self):
-        # TODO: 实现录入学生信息的逻辑
         self.function_window = EnterStudentInfoWindow(self)
         self.function_window.show()
         self.hide()
 
     def search_student_info(self):
-        # TODO: 实现查询学生信息的逻辑
         self.function_window = SearchStudentInfoWindow(self)
         self.function_window.show()
         self.hide()
 
     def enter_student_grade(self):
-        # TODO: 实现录入学生成绩的逻辑
         self.function_window = EnterStudentGradeWindow(self)
         self.function_window.show()
         self.hide()
 
     def query_student_courses(self):
-        # TODO: 实现查询学生课程和成绩的逻辑
         self.function_window = QueryStudentCoursesWindow(self)
         self.function_window.show()
         self.hide()
 
     def query_student_teachers(self):
-        # TODO: 实现查询学生的教师的逻辑
         self.function_window = QueryStudentTeachersWindow(self)
         self.function_window.show()
         self.hide()
 
     def query_students_near_expulsion(self):
-        # TODO: 实现查询快要被开除的学生的逻辑
         self.function_window = QueryStudentsNearExpulsionWindow(self)
         self.function_window.show()
         self.hide()
 
     def query_student_expulsion(self):
-        # TODO: 实现查询学生是否被开除的逻辑
         self.function_window = QueryStudentExpulsionWindow(self)
         self.function_window.show()
         self.hide()
@@ -196,10 +189,6 @@ class EnterStudentInfoWindow(QWidget):
 
     def back_to_main(self):
         print("返回主界面")  # 调试输出
-        # 使用 self.parent() 显示主窗口
-        # if self.main_window:
-        #     self.main_window.show_main_window()
-        # self.hide()
         self.close()  # 关闭功能窗口
         self.main_window.show()  # 显示主窗口
 
@@ -272,10 +261,6 @@ class SearchStudentInfoWindow(QWidget):
 
     def back_to_main(self):
         print("返回主界面")  # 调试输出
-        # 使用 self.parent() 显示主窗口
-        # if self.main_window:
-        #     self.main_window.show_main_window()
-        # self.hide()
         self.close()  # 关闭功能窗口
         self.main_window.show()  # 显示主窗口
 
@@ -312,12 +297,6 @@ class SearchStudentInfoWindow(QWidget):
     def displayResults(self, results):
         # 清空当前内容
         self.resultsTextEdit.clear()
-
-        # 显示查询结果
-        # for row_data in results:
-        #     # 将每一行数据转换为字符串，并添加到文本编辑器中
-        #     result_line = ' | '.join(str(data) for data in row_data)
-        #     self.resultsTextEdit.append(result_line)
         res_data = results[0]
         res = '学号: ' + res_data[0] + '\n' + '姓名: ' + res_data[1] + '\n' + '性别: ' + res_data[
             2] + '\n' + '年龄: ' + str(
@@ -442,10 +421,6 @@ class QueryStudentCoursesWindow(QWidget):
 
     def back_to_main(self):
         print("返回主界面")  # 调试输出
-        # 使用 self.parent() 显示主窗口
-        # if self.main_window:
-        #     self.main_window.show_main_window()
-        # self.hide()
         self.close()  # 关闭功能窗口
         self.main_window.show()  # 显示主窗口
 
@@ -486,17 +461,6 @@ class QueryStudentCoursesWindow(QWidget):
         finally:
             conn.close()
         print("查询学生信息")  # 调试输出
-
-    # def displayResults(self, results):
-    #     # 清空当前内容
-    #     self.resultsTextEdit.clear()
-    #
-    #         # 显示查询结果
-    #     for row_data in results:
-    #         # 将每一行数据转换为字符串，并添加到文本编辑器中
-    #         result_line = ' | '.join(str(data) for data in row_data)
-    #         self.resultsTextEdit.append(result_line)
-    #     # res_data = results[0]
     def displayResults(self, results):
         self.resultsTable.setRowCount(len(results))  # 设置行数
         for row_num, row_data in enumerate(results):
