@@ -3,9 +3,7 @@ import sys
 from PyQt5.QtWidgets import *
 from pymysql import Connection
 
-Did_to_Dname = {'CS_SE': '软件与理论方向',
-                'CS_AI': '数据智能方向',
-                'CS_ES': '嵌入式方向',
+Did_to_Dname = {'CS_SE': '软件与理论方向', 'CS_AI': '数据智能方向', 'CS_ES': '嵌入式方向',
                 'CS_NS': '网络与信息安全方向'}
 
 
@@ -65,77 +63,101 @@ class MainApp(QMainWindow):
         self.close_app = False  # 添加一个标志以确定是否应该关闭应用程序
 
     def initUI(self):
-        # 创建 QStackedWidget
-        self.stackedWidget = QStackedWidget(self)
-        self.setCentralWidget(self.stackedWidget)
+        # 主界面布局
+        layout = QVBoxLayout()
 
-        # 创建每个功能的小部件
-        self.enterStudentInfoWidget = EnterStudentInfoWindow()
-        self.searchStudentInfoWidget = SearchStudentInfoWindow()
-        self.enterStudentGradeWidget = EnterStudentGradeWindow()
-        self.queryStudentCoursesWidget = QueryStudentCoursesWindow()
-        self.queryStudentTeachersWidget = QueryStudentTeachersWindow()
-        self.queryStudentsNearExpulsionWidget = QueryStudentsNearExpulsionWindow()
-        self.queryStudentExpulsionWidget = QueryStudentExpulsionWindow()
+        # 功能按钮列表
+        buttons = [
+            ('录入学生信息', self.enter_student_info),
+            ('查询学生信息', self.search_student_info),
+            ('录入学生成绩', self.enter_student_grade),
+            ('查询学生课程和成绩', self.query_student_courses),
+            ('查询学生的教师', self.query_student_teachers),
+            ('查询快要被开除的学生', self.query_students_near_expulsion),
+            ('查询学生是否被开除', self.query_student_expulsion),
+            ('退出', self.exit_app)
+        ]
 
-        # 将小部件添加到 QStackedWidget
-        self.stackedWidget.addWidget(self.enterStudentInfoWidget)
-        self.stackedWidget.addWidget(self.searchStudentInfoWidget)
-        self.stackedWidget.addWidget(self.enterStudentGradeWidget)
-        self.stackedWidget.addWidget(self.queryStudentCoursesWidget)
-        self.stackedWidget.addWidget(self.queryStudentTeachersWidget)
-        self.stackedWidget.addWidget(self.queryStudentsNearExpulsionWidget)
-        self.stackedWidget.addWidget(self.queryStudentExpulsionWidget)
+        # 为每个功能创建按钮并添加到布局
+        for btn_text, btn_slot in buttons:
+            button = QPushButton(btn_text, self)
+            button.clicked.connect(btn_slot)
+            layout.addWidget(button)
 
-        # 创建切换页面的按钮
-        self.toolbar = self.addToolBar('Tools')
-        btn_enter_student_info = QPushButton('录入学生信息', self)
-        btn_enter_student_info.clicked.connect(lambda: self.stackedWidget.setCurrentWidget(self.enterStudentInfoWidget))
-        self.toolbar.addWidget(btn_enter_student_info)
-        self.toolbar.addSeparator()  # 添加分隔符
-        btn_search_student_info = QPushButton('查询学生信息', self)
-        btn_search_student_info.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.searchStudentInfoWidget))
-        self.toolbar.addWidget(btn_search_student_info)
-        self.toolbar.addSeparator()  # 添加分隔符
-        btn_enter_student_grade = QPushButton('录入学生成绩', self)
-        btn_enter_student_grade.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.enterStudentGradeWidget))
-        self.toolbar.addWidget(btn_enter_student_grade)
-        self.toolbar.addSeparator()  # 添加分隔符
-        btn_query_student_courses = QPushButton('查询学生课程和成绩', self)
-        btn_query_student_courses.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.queryStudentCoursesWidget))
-        self.toolbar.addWidget(btn_query_student_courses)
-        self.toolbar.addSeparator()  # 添加分隔符
-        btn_query_student_teachers = QPushButton('查询学生的教师', self)
-        btn_query_student_teachers.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.queryStudentTeachersWidget))
-        self.toolbar.addWidget(btn_query_student_teachers)
-        self.toolbar.addSeparator()  # 添加分隔符
-        btn_query_students_near_expulsion = QPushButton('查询快要被开除的学生', self)
-        btn_query_students_near_expulsion.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.queryStudentsNearExpulsionWidget))
-        self.toolbar.addWidget(btn_query_students_near_expulsion)
-        self.toolbar.addSeparator()  # 添加分隔符
-        btn_query_student_expulsion = QPushButton('查询学生是否被开除', self)
-        btn_query_student_expulsion.clicked.connect(
-            lambda: self.stackedWidget.setCurrentWidget(self.queryStudentExpulsionWidget))
-        self.toolbar.addWidget(btn_query_student_expulsion)
-        self.toolbar.addSeparator()  # 添加分隔符
+        # 设置布局
+        container = QWidget()
+        container.setLayout(layout)
+        self.setCentralWidget(container)
 
         # 设置窗口标题和大小
         self.setWindowTitle('学生管理系统')
-        self.setGeometry(300, 300, 750, 600)
+        self.setGeometry(300, 300, 300, 200)
         self.show()
+
+    # 下面定义所有功能按钮的槽函数
+    def enter_student_info(self):
+        # TODO: 实现录入学生信息的逻辑
+        self.function_window = EnterStudentInfoWindow(self)
+        self.function_window.show()
+        self.hide()
+
+    def search_student_info(self):
+        # TODO: 实现查询学生信息的逻辑
+        self.function_window = SearchStudentInfoWindow(self)
+        self.function_window.show()
+        self.hide()
+
+    def enter_student_grade(self):
+        # TODO: 实现录入学生成绩的逻辑
+        self.function_window = EnterStudentGradeWindow(self)
+        self.function_window.show()
+        self.hide()
+
+    def query_student_courses(self):
+        # TODO: 实现查询学生课程和成绩的逻辑
+        self.function_window = QueryStudentCoursesWindow(self)
+        self.function_window.show()
+        self.hide()
+
+    def query_student_teachers(self):
+        # TODO: 实现查询学生的教师的逻辑
+        self.function_window = QueryStudentTeachersWindow(self)
+        self.function_window.show()
+        self.hide()
+
+    def query_students_near_expulsion(self):
+        # TODO: 实现查询快要被开除的学生的逻辑
+        self.function_window = QueryStudentsNearExpulsionWindow(self)
+        self.function_window.show()
+        self.hide()
+
+    def query_student_expulsion(self):
+        # TODO: 实现查询学生是否被开除的逻辑
+        self.function_window = QueryStudentExpulsionWindow(self)
+        self.function_window.show()
+        self.hide()
+
+    # 用于正常退出应用程序的方法
+    def exit_app(self):
+        self.close_app = True  # 设置标志为 True
+        self.close()  # 尝试关闭窗口，这将触发 closeEvent
+
+    def closeEvent(self, event):
+        # 如果 self.close_app 为 True，则退出应用程序
+        if self.close_app:
+            event.accept()  # 接受关闭事件，将关闭应用程序
+        else:
+            event.ignore()  # 忽略关闭事件，仅隐藏窗口
+            self.hide()  # 隐藏窗口
 
 
 # 功能窗口类的定义
 # 1. 录入学生信息
 class EnterStudentInfoWindow(QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.initUI()
+        self.main_window = main_window
         self.ssa = StudentSystemApp()
 
     def initUI(self):
@@ -147,7 +169,7 @@ class EnterStudentInfoWindow(QWidget):
         self.sageInput = QLineEdit(self)
         self.sdeptInput = QLineEdit(self)
         submitButton = QPushButton('录入学生信息', self)
-        self.back_button = QPushButton('退出', self)
+        self.back_button = QPushButton('Back to Main', self)
 
         layout.addWidget(QLabel('学号'))
         layout.addWidget(self.sidInput)
@@ -166,10 +188,23 @@ class EnterStudentInfoWindow(QWidget):
         layout.addWidget(self.resultLabel)
 
         submitButton.clicked.connect(self.addStudent)
-        self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.back_button.clicked.connect(self.back_to_main)
 
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
+        # self.show()
+
+    def back_to_main(self):
+        print("返回主界面")  # 调试输出
+        # 使用 self.parent() 显示主窗口
+        # if self.main_window:
+        #     self.main_window.show_main_window()
+        # self.hide()
+        self.close()  # 关闭功能窗口
+        self.main_window.show()  # 显示主窗口
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
 
     def addStudent(self):
         conn = Connection(
@@ -207,16 +242,17 @@ class EnterStudentInfoWindow(QWidget):
 
 # 2. 查询学生信息
 class SearchStudentInfoWindow(QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.initUI()
+        self.main_window = main_window
 
     def initUI(self):
         layout = QVBoxLayout()
 
         self.sidInput = QLineEdit(self)
         submitButton = QPushButton('查询学生信息', self)
-        self.back_button = QPushButton('退出', self)
+        self.back_button = QPushButton('Back to Main', self)
 
         layout.addWidget(QLabel('学号'))
         layout.addWidget(self.sidInput)
@@ -224,14 +260,27 @@ class SearchStudentInfoWindow(QWidget):
         layout.addWidget(self.back_button)
 
         submitButton.clicked.connect(self.searchStudent)
-        self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.back_button.clicked.connect(self.back_to_main)
         # 创建文本编辑器
         self.resultsTextEdit = QTextEdit(self)
         self.resultsTextEdit.setReadOnly(True)  # 设置为只读，不允许用户编辑
+
         layout.addWidget(self.resultsTextEdit)  # 将文本编辑器添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
         # self.show()
+
+    def back_to_main(self):
+        print("返回主界面")  # 调试输出
+        # 使用 self.parent() 显示主窗口
+        # if self.main_window:
+        #     self.main_window.show_main_window()
+        # self.hide()
+        self.close()  # 关闭功能窗口
+        self.main_window.show()  # 显示主窗口
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
 
     def searchStudent(self):
         conn = Connection(
@@ -244,7 +293,9 @@ class SearchStudentInfoWindow(QWidget):
         DataBase = 'StudentSystemTest'
         cursor = conn.cursor()
         conn.select_db(DataBase)
+
         sid = self.sidInput.text()
+
         try:
             # 使用参数化查询来提高安全性
             sql = "select * from Student where Sid = '%s'" % sid
@@ -261,6 +312,12 @@ class SearchStudentInfoWindow(QWidget):
     def displayResults(self, results):
         # 清空当前内容
         self.resultsTextEdit.clear()
+
+        # 显示查询结果
+        # for row_data in results:
+        #     # 将每一行数据转换为字符串，并添加到文本编辑器中
+        #     result_line = ' | '.join(str(data) for data in row_data)
+        #     self.resultsTextEdit.append(result_line)
         res_data = results[0]
         res = '学号: ' + res_data[0] + '\n' + '姓名: ' + res_data[1] + '\n' + '性别: ' + res_data[
             2] + '\n' + '年龄: ' + str(
@@ -270,9 +327,10 @@ class SearchStudentInfoWindow(QWidget):
 
 # 3. 录入学生成绩
 class EnterStudentGradeWindow(QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.initUI()
+        self.main_window = main_window
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -281,8 +339,9 @@ class EnterStudentGradeWindow(QWidget):
         self.cidInput = QLineEdit(self)
         self.tidInput = QLineEdit(self)
         self.gradeInput = QLineEdit(self)
+        # self.isPassedInput = QLineEdit(self)
         submitButton = QPushButton('录入学生成绩', self)
-        self.back_button = QPushButton('退出', self)
+        self.back_button = QPushButton('Back to Main', self)
 
         layout.addWidget(QLabel('学号'))
         layout.addWidget(self.sidInput)
@@ -292,15 +351,31 @@ class EnterStudentGradeWindow(QWidget):
         layout.addWidget(self.tidInput)
         layout.addWidget(QLabel('成绩'))
         layout.addWidget(self.gradeInput)
+        # layout.addWidget(QLabel('是否及格'))
+        # layout.addWidget(self.isPassedInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
         self.resultLabel = QLabel('')
         layout.addWidget(self.resultLabel)
+
         submitButton.clicked.connect(self.addStudent)
-        self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.back_button.clicked.connect(self.back_to_main)
+
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
         # self.show()
+
+    def back_to_main(self):
+        print("返回主界面")  # 调试输出
+        # 使用 self.parent() 显示主窗口
+        # if self.main_window:
+        #     self.main_window.show_main_window()
+        # self.hide()
+        self.close()  # 关闭功能窗口
+        self.main_window.show()  # 显示主窗口
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
 
     def addStudent(self):
         conn = Connection(
@@ -318,6 +393,7 @@ class EnterStudentGradeWindow(QWidget):
         cid = self.cidInput.text()
         tid = self.tidInput.text()
         grade = self.gradeInput.text()
+        # isPassed = self.isPassedInput.text()
         isPassed = 1 if int(grade) >= 60 else 0
         try:
             # 使用参数化查询来提高安全性
@@ -335,16 +411,17 @@ class EnterStudentGradeWindow(QWidget):
 
 # 4. 查询学生课程和成绩
 class QueryStudentCoursesWindow(QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.initUI()
+        self.main_window = main_window
 
     def initUI(self):
         layout = QVBoxLayout()
 
         self.sidInput = QLineEdit(self)
         submitButton = QPushButton('查询学生课程和成绩', self)
-        self.back_button = QPushButton('退出', self)
+        self.back_button = QPushButton('Back to Main', self)
 
         layout.addWidget(QLabel('学号'))
         layout.addWidget(self.sidInput)
@@ -352,15 +429,28 @@ class QueryStudentCoursesWindow(QWidget):
         layout.addWidget(self.back_button)
 
         submitButton.clicked.connect(self.searchStudent)
-        self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.back_button.clicked.connect(self.back_to_main)
         # 创建表格
         self.resultsTable = QTableWidget(self)
         self.resultsTable.setColumnCount(5)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
         self.resultsTable.setHorizontalHeaderLabels(['学号', '课程名', '教师', '成绩', '是否通过'])
+
         layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
         # self.show()
+
+    def back_to_main(self):
+        print("返回主界面")  # 调试输出
+        # 使用 self.parent() 显示主窗口
+        # if self.main_window:
+        #     self.main_window.show_main_window()
+        # self.hide()
+        self.close()  # 关闭功能窗口
+        self.main_window.show()  # 显示主窗口
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
 
     def searchStudent(self):
         conn = Connection(
@@ -377,6 +467,7 @@ class QueryStudentCoursesWindow(QWidget):
         sid = self.sidInput.text()
 
         try:
+            # 使用参数化查询来提高安全性
             sql = "select * from SC where Sid = '%s'" % sid
             cursor.execute(sql)
             result = cursor.fetchall()
@@ -396,6 +487,16 @@ class QueryStudentCoursesWindow(QWidget):
             conn.close()
         print("查询学生信息")  # 调试输出
 
+    # def displayResults(self, results):
+    #     # 清空当前内容
+    #     self.resultsTextEdit.clear()
+    #
+    #         # 显示查询结果
+    #     for row_data in results:
+    #         # 将每一行数据转换为字符串，并添加到文本编辑器中
+    #         result_line = ' | '.join(str(data) for data in row_data)
+    #         self.resultsTextEdit.append(result_line)
+    #     # res_data = results[0]
     def displayResults(self, results):
         self.resultsTable.setRowCount(len(results))  # 设置行数
         for row_num, row_data in enumerate(results):
@@ -405,30 +506,46 @@ class QueryStudentCoursesWindow(QWidget):
 
 # 5. 查询学生的教师
 class QueryStudentTeachersWindow(QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.initUI()
+        self.main_window = main_window
 
     def initUI(self):
         layout = QVBoxLayout()
 
         self.sidInput = QLineEdit(self)
         submitButton = QPushButton('查询学生的教师', self)
-        self.back_button = QPushButton('退出', self)
+        self.back_button = QPushButton('Back to Main', self)
+
         layout.addWidget(QLabel('学号'))
         layout.addWidget(self.sidInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
+
         submitButton.clicked.connect(self.searchStudent)
-        self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.back_button.clicked.connect(self.back_to_main)
         # 创建表格
         self.resultsTable = QTableWidget(self)
         self.resultsTable.setColumnCount(2)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
         self.resultsTable.setHorizontalHeaderLabels(['教师', '课程名'])
+
         layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
         # self.show()
+
+    def back_to_main(self):
+        print("返回主界面")  # 调试输出
+        # 使用 self.parent() 显示主窗口
+        # if self.main_window:
+        #     self.main_window.show_main_window()
+        # self.hide()
+        self.close()  # 关闭功能窗口
+        self.main_window.show()  # 显示主窗口
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
 
     def searchStudent(self):
         conn = Connection(
@@ -441,7 +558,9 @@ class QueryStudentTeachersWindow(QWidget):
         DataBase = 'StudentSystemTest'
         cursor = conn.cursor()
         conn.select_db(DataBase)
+
         sid = self.sidInput.text()
+
         try:
             sql = "select Tname ,Cname from SC,Teacher,course where Sid='%s' and SC.Tid=Teacher.Tid and SC.Cid=course.Cid" % sid
             cursor.execute(sql)
@@ -470,18 +589,22 @@ class QueryStudentTeachersWindow(QWidget):
 
 # 6. 查询快要被开除的学生
 class QueryStudentsNearExpulsionWindow(QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.initUI()
+        self.main_window = main_window
 
     def initUI(self):
         layout = QVBoxLayout()
+
         submitButton = QPushButton('查询快要被开除的学生', self)
-        self.back_button = QPushButton('退出', self)
+        self.back_button = QPushButton('Back to Main', self)
+
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
+
         submitButton.clicked.connect(self.searchStudent)
-        self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.back_button.clicked.connect(self.back_to_main)
         # 创建表格
         self.resultsTable = QTableWidget(self)
         self.resultsTable.setColumnCount(3)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
@@ -491,6 +614,18 @@ class QueryStudentsNearExpulsionWindow(QWidget):
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
         # self.show()
+
+    def back_to_main(self):
+        print("返回主界面")  # 调试输出
+        # 使用 self.parent() 显示主窗口
+        # if self.main_window:
+        #     self.main_window.show_main_window()
+        # self.hide()
+        self.close()  # 关闭功能窗口
+        self.main_window.show()  # 显示主窗口
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
 
     def searchStudent(self):
         conn = Connection(
@@ -534,9 +669,10 @@ class QueryStudentsNearExpulsionWindow(QWidget):
 
 # 7. 查询学生是否被开除
 class QueryStudentExpulsionWindow(QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.initUI()
+        self.main_window = main_window
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -544,7 +680,7 @@ class QueryStudentExpulsionWindow(QWidget):
         self.sidInput = QLineEdit(self)
         self.snameInput = QLineEdit(self)
         submitButton = QPushButton('查询学生是否被开除', self)
-        self.back_button = QPushButton('退出', self)
+        self.back_button = QPushButton('Back to Main', self)
 
         layout.addWidget(QLabel('学号'))
         layout.addWidget(self.sidInput)
@@ -554,7 +690,7 @@ class QueryStudentExpulsionWindow(QWidget):
         layout.addWidget(self.back_button)
 
         submitButton.clicked.connect(self.searchStudent)
-        self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.back_button.clicked.connect(self.back_to_main)
         # 创建表格
         self.resultsTable = QTableWidget(self)
         self.resultsTable.setColumnCount(1)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
@@ -564,6 +700,18 @@ class QueryStudentExpulsionWindow(QWidget):
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
         # self.show()
+
+    def back_to_main(self):
+        print("返回主界面")  # 调试输出
+        # 使用 self.parent() 显示主窗口
+        # if self.main_window:
+        #     self.main_window.show_main_window()
+        # self.hide()
+        self.close()  # 关闭功能窗口
+        self.main_window.show()  # 显示主窗口
+
+    def set_main_window(self, main_window):
+        self.main_window = main_window
 
     def searchStudent(self):
         conn = Connection(
@@ -576,6 +724,9 @@ class QueryStudentExpulsionWindow(QWidget):
         DataBase = 'StudentSystemTest'
         cursor = conn.cursor()
         conn.select_db(DataBase)
+        # print("请输入学生信息：")
+        # print('1.按学号查询  2.按姓名查询')
+        # user_input = input("请输入您的选择：")
         sid = self.sidInput.text()
         sname = self.snameInput.text()
         if sid:
