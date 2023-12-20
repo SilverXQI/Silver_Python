@@ -185,7 +185,6 @@ class EnterStudentInfoWindow(QWidget):
 
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
-        # self.show()
 
     def back_to_main(self):
         print("返回主界面")  # 调试输出
@@ -461,6 +460,7 @@ class QueryStudentCoursesWindow(QWidget):
         finally:
             conn.close()
         print("查询学生信息")  # 调试输出
+
     def displayResults(self, results):
         self.resultsTable.setRowCount(len(results))  # 设置行数
         for row_num, row_data in enumerate(results):
