@@ -127,7 +127,7 @@ class MainApp(QMainWindow):
         self.toolbar.addSeparator()  # 添加分隔符
 
         # 设置窗口标题和大小
-        self.setWindowTitle('学生管理系统')
+        self.setWindowTitle('学生管理系统 by 21009200619 王靖淇')
         self.setGeometry(500, 200, 750, 700)
         self.show()
 
@@ -217,21 +217,27 @@ class SearchStudentInfoWindow(QWidget):
         layout = QVBoxLayout()
 
         self.sidInput = QLineEdit(self)
+        self.sidName = QLineEdit(self)
+        self.department = QLineEdit(self)
         submitButton = QPushButton('查询学生信息', self)
         self.back_button = QPushButton('退出', self)
 
         layout.addWidget(QLabel('学号'))
         layout.addWidget(self.sidInput)
+        layout.addWidget(QLabel('姓名'))
+        layout.addWidget(self.sidName)
+        layout.addWidget(QLabel('专业'))
+        layout.addWidget(self.department)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
 
         submitButton.clicked.connect(self.searchStudent)
         self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
-        # 创建文本编辑器
-        self.resultsTextEdit = QTextEdit(self)
-
-        self.resultsTextEdit.setReadOnly(True)  # 设置为只读，不允许用户编辑
-        layout.addWidget(self.resultsTextEdit)  # 将文本编辑器添加到布局中
+        # 创建表格
+        self.resultsTable = QTableWidget(self)
+        self.resultsTable.setColumnCount(5)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
+        self.resultsTable.setHorizontalHeaderLabels(['学号', '姓名', '性别', '年龄', '专业'])
+        layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
         # self.show()
@@ -248,10 +254,35 @@ class SearchStudentInfoWindow(QWidget):
         cursor = conn.cursor()
         conn.select_db(DataBase)
         sid = self.sidInput.text()
+        print(sid)
+        sname = self.sidName.text()
+        department = self.department.text()
+        if sid:
+            print(sid)
+        elif sname:
+            print(sname)
+            sid = Sname_to_Sid(cursor, sname)
+        elif department:
+            print(department)
+        else:
+            print("输入错误")
+            return
         try:
-            sql = "select * from Student where Sid = '%s'" % sid
+            if sid:
+                sql = "select * from Student where Sid = '%s'" % sid
+            elif department:
+                sql = "select * from Student,department where Sdept = '%s'" % department
+            else:
+                return
             cursor.execute(sql)
             result = cursor.fetchall()
+            result_list=[]
+            # for i in range(len(result)):
+            #     for j in range(len(result[i])-1):
+            #         result_list.append(result[i][j])
+            #     result_list.append()
+            #     result_list[i] = list(result[i])
+                # result_list[i][4] = Did_to_Dname[result[i][4]]
             self.displayResults(result)
             self.sidInput.clear()
             print(result)
@@ -263,12 +294,10 @@ class SearchStudentInfoWindow(QWidget):
 
     def displayResults(self, results):
         # 清空当前内容
-        self.resultsTextEdit.clear()
-        res_data = results[0]
-        res = '学号: ' + res_data[0] + '\n' + '姓名: ' + res_data[1] + '\n' + '性别: ' + res_data[
-            2] + '\n' + '年龄: ' + str(
-            res_data[3]) + '\n' + '专业: 计算机科学与技术' + '\n' + '方向:' + Did_to_Dname[res_data[4]]
-        self.resultsTextEdit.append(res)
+        self.resultsTable.setRowCount(len(results))  # 设置行数
+        for row_num, row_data in enumerate(results):
+            for column_num, data in enumerate(row_data):
+                self.resultsTable.setItem(row_num, column_num, QTableWidgetItem(str(data)))
 
 
 # 3. 录入学生成绩
@@ -287,13 +316,13 @@ class EnterStudentGradeWindow(QWidget):
         submitButton = QPushButton('录入学生成绩', self)
         self.back_button = QPushButton('退出', self)
 
-        layout.addWidget(QLabel('学号'))
+        layout.addWidget(QLabel('学号:'))
         layout.addWidget(self.sidInput)
-        layout.addWidget(QLabel('课程号'))
+        layout.addWidget(QLabel('课程号 (1-21):'))
         layout.addWidget(self.cidInput)
-        layout.addWidget(QLabel('教师号'))
+        layout.addWidget(QLabel('教师号(6675-6695):'))
         layout.addWidget(self.tidInput)
-        layout.addWidget(QLabel('成绩'))
+        layout.addWidget(QLabel('成绩:'))
         layout.addWidget(self.gradeInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
@@ -326,7 +355,7 @@ class EnterStudentGradeWindow(QWidget):
             # 使用参数化查询来提高安全性
             sql = "insert into SC values ('%s','%s','%s','%s','%s')" % (sid, cid, tid, grade, isPassed)
             cursor.execute(sql)
-            self.resultLabel.setText("录入成功")  # 设置标签文本为“录入成功”
+            self.resultLabel.setText("录入成功！")  # 设置标签文本为“录入成功”
             print("录入成功")
         except Exception as e:
             self.resultLabel.setText("录入失败，该生成绩已存在")  # 设置标签文本为“录入失败”
@@ -353,6 +382,9 @@ class QueryStudentCoursesWindow(QWidget):
         layout.addWidget(self.sidInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
+        # 添加一个标签用于显示操作结果
+        self.resultavgLabel = QLabel('')
+        layout.addWidget(self.resultavgLabel)
 
         submitButton.clicked.connect(self.searchStudent)
         self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
@@ -383,15 +415,18 @@ class QueryStudentCoursesWindow(QWidget):
             cursor.execute(sql)
             result = cursor.fetchall()
             list_result = list(result)
+            avg_grade= 0
             for i in range(len(list_result)):
                 list_result[i] = list(list_result[i])
                 list_result[i][1] = Cid_to_Cname(cursor, list_result[i][1])
                 list_result[i][2] = Tid_to_Tname(cursor, list_result[i][2])
                 list_result[i][4] = '是' if list_result[i][4] == 1 else '否'
+                avg_grade=avg_grade+list_result[i][3]
             if len(list_result) == 0:
                 list_result.append(['无', '无', '无', '无', '无'])
             self.displayResults(list_result)
             print(list_result)
+            self.resultavgLabel.setText("平均成绩为{:.2f}".format(avg_grade/len(list_result)))
         except Exception as e:
             print("查询失败:", e)
         finally:
@@ -548,9 +583,9 @@ class QueryStudentExpulsionWindow(QWidget):
         submitButton = QPushButton('查询学生是否被开除', self)
         self.back_button = QPushButton('退出', self)
 
-        layout.addWidget(QLabel('学号'))
+        layout.addWidget(QLabel('学号:'))
         layout.addWidget(self.sidInput)
-        layout.addWidget(QLabel('姓名'))
+        layout.addWidget(QLabel('姓名:'))
         layout.addWidget(self.snameInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
