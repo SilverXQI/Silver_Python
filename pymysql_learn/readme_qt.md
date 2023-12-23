@@ -1,6 +1,261 @@
+# 实验名：学籍管理系统
+
+## 一.实验要求：
+
+1.学校有若干**专业**，每个专业每年招若干个**班**，每个班有若干**学生**
+
+2.每个专业有自己的**教学计划**，规定了该专业相关课程的性质（必修或选修）以及授课学期；例如，数据库课程对计算机专业为必修、在大三上学期，但对数学专业可能为选修、在大三下学期，而中文专业可能不学这门课
+
+3.一位**教师**可以给多个班带课，但不能给一个班带多门课
+
+4.一门课程最多允许学生一次补考；学生达到如下条件之一的被开除：不及格必修课累计达10学分、或不及格选修课累计达15学分
+
+5.上述语义未涉及到的事项和细节，可自行做出合理假定
+
+## 二.功能需求：
+
+建库时应录入一定数量的（不能过少）学生、教师、课程、成绩等基本信息
+
+1.录入一位学生，应包含学号、姓名、性别、出生年月、班级等信息
+
+2.按学号、姓名、专业三种方式查询学生基本信息
+
+3.录入一位学生一门课的成绩
+
+4.查询一位学生所修的课程、性质（必修或选修）、学期、学分及成绩；查询他的必修课平均成绩、所有课程平均成绩（平均成绩应按学分加权）
+
+5.查询一位学生被哪些教师教过课
+
+6.查询快要被开除的学生（距被开除差3学分之内）
+
+## 三.注意事项
+
+1.在数据库的设计过程中需要运用规范化理论（第六章），避免出现插入/删除异常、数据冗余等问题
+
+2.应设定关系的完整性规则，如实体完整性（例如主码），参照完整性（外码），用户定义的完整性（例如性别只能为“男”或“女”）
+
+3.可以使用索引来加快查询的速度（不强求）
+
+4.可以使用视图来简化系统的设计（不强求）
+
+5.附部分数据示例，可以参考使用；但这些仅是一部分，仍需寻找或构造需要的数据
+
+## 四.ER图
+
+![](img\sql_ertu.png)
+
+## 五.具体实现
+
+### 1.创建专业表
+
+1.专业代号
+
+2.专业名称
+
+```mysql
+create table department(
+    Did varchar(255) primary key,
+    Dname varchar(255) not null
+);
+```
+
+### 2. 创建学生表
+
+1.学号
+
+2.姓名
+
+3.性别
+
+4.年龄
+
+5.所在专业
+
+```mysql
+create table student(
+    Sid varchar(255) primary key,#学号
+    Sname varchar(255) not null,#姓名
+    Ssex varchar(255) not null,#性别
+    Sage int not null,#年龄
+    Sdept varchar(255) not null,#所在系
+    foreign key(Sdept) references department(Did)#外键
+);
+```
+
+### 3.创建课程表
+
+1.课程号
+
+2.课程名
+
+3.学分
+
+4.课程类型（必修，选修）
+
+```mysql
+create table course(
+    Cid varchar(255) primary key,#课程号
+    Cname varchar(255) not null,#课程名
+    Ccredit int not null,#学分
+    Ctype int check ( Ctype in (0, 1) ) not null#课程类型
+);
+```
+
+### 4.创建教师表
+
+1.教师工号
+
+2.教师姓名
+
+```mysql
+create table teacher(
+    Tid varchar(255) primary key,#教师号
+    Tname varchar(255) not null#姓名
+);
+```
+
+### 5.创建选课记录表
+
+1.学号
+
+2.课程号
+
+3.任课教师号
+
+4.成绩
+
+5.是否通过
+
+```mysql
+create table sc(
+    Sid varchar(255) not null,#学号
+    Cid varchar(255) not null,#课程号
+    Tid varchar(255) not null,#教师号
+    Grade int not null,#成绩
+    IsPassed int check ( IsPassed in (0, 1) ) not null,#是否通过
+    primary key(Sid, Cid),
+    foreign key(Sid) references student(Sid),
+    foreign key(Cid) references course(Cid)
+);
+```
+
+### 6.生成选课记录
+
+1.前四张基础信息表由自己创建获取
+
+2.选课记录为运算生成
+
+```python
+import pandas as pd
+
+# 读取 xlsx 文件到 DataFrame
+df = pd.read_excel('Data.xlsx', sheet_name='Student')
+
+# 打印 DataFrame 的内容
+# print(len(df))
+Sid = []
+Cid = []
+Tid = []
+Grade = []
+IsPassed = []
+for i in range(len(df)):
+    sid = df['Sid'][i]
+    sdept = df['Sdept'][i]
+    for i in range(17):
+        Sid.append(sid)
+        Cid.append(str(i + 1))
+        Tid.append(str(i+6675))
+        grade = random.randint(55, 100)
+        Grade.append(grade)
+        IsPassed.append(1 if grade >= 60 else 0)
+    if sdept == 'CS_SE':
+        Sid.append(sid)
+        Cid.append('18')
+        Tid.append('6692')
+        grade = random.randint(55, 100)
+        Grade.append(grade)
+        IsPassed.append(1 if grade>=60 else 0)
+    elif sdept == 'CS_AI':
+        Sid.append(sid)
+        Cid.append('19')
+        Tid.append('6693')
+        grade = random.randint(55, 100)
+        Grade.append(grade)
+        IsPassed.append(1 if grade >= 60 else 0)
+    elif sdept == 'CS_ES':
+        Sid.append(sid)
+        Cid.append('20')
+        Tid.append('6694')
+        grade = random.randint(55, 100)
+        Grade.append(grade)
+        IsPassed.append(1 if grade >= 60 else 0)
+    elif sdept == 'CS_NS':
+        Sid.append(sid)
+        Cid.append('21')
+        Tid.append('6695')
+        grade = random.randint(55, 100)
+        Grade.append(grade)
+        IsPassed.append(1 if grade >= 60 else 0)
+
+data = {'Sid': Sid, 'Cid': Cid, 'Tid': Tid, 'Grade': Grade, 'IsPassed': IsPassed}
+df = pd.DataFrame(data)
+df.to_excel("SC.xlsx", index=False)
+```
+
+### 7.函数代码
+
+#### （1）.数据库创建
+
+```mysql
+create database if not exists StudentSystemTest;
+# select database(StudentSystemTest);
+create table department(
+    Did varchar(255) primary key,
+    Dname varchar(255) not null
+);
+
+create table student(
+    Sid varchar(255) primary key,#学号
+    Sname varchar(255) not null,#姓名
+    Ssex varchar(255) not null,#性别
+    Sage int not null,#年龄
+    Sdept varchar(255) not null,#所在系
+    foreign key(Sdept) references department(Did)#外键
+);
+
+create table course(
+    Cid varchar(255) primary key,#课程号
+    Cname varchar(255) not null,#课程名
+    Ccredit int not null,#学分
+    Ctype int check ( Ctype in (0, 1) ) not null#课程类型
+);
+
+create table teacher(
+    Tid varchar(255) primary key,#教师号
+    Tname varchar(255) not null#姓名
+);
+
+
+create table sc(
+    Sid varchar(255) not null,#学号
+    Cid varchar(255) not null,#课程号
+    Tid varchar(255) not null,#教师号
+    Grade int not null,#成绩
+    IsPassed int check ( IsPassed in (0, 1) ) not null,#是否通过
+    primary key(Sid, Cid),
+    foreign key(Sid) references student(Sid),
+    foreign key(Cid) references course(Cid)
+);
+```
+
+#### （2）.学生管理系统
+
+我选择用MySQL构建数据库，python实现逻辑功能，通过pymysql连接数据库，PyQt5画出GUI页面，通过QStackedWidget将每个QWidget连接在同一个页面里，每个模块中不同的功能由各自的类进行编写。最后通过setStyleSheet对GUI进行一定程度的美化。
+
+```python
 import sys
 
-from PyQt5.QtGui import  QIcon
+from PyQt5.QtGui import QPalette, QIcon
 from PyQt5.QtWidgets import *
 from pymysql import Connection
 
@@ -706,3 +961,41 @@ if __name__ == '__main__':
     main_app = MainApp()
     main_app.show()
     sys.exit(app.exec_())
+```
+
+## 六.结果输出
+
+1.初始界面
+
+![sql_res1](img\sql_res1.png)
+
+2.这里输入的学生信息为21009200001，李四，22，男，CS_AI，由于我设置了输入成功后清屏以便于下一位同学的输入，所以输入消失了
+
+![sql_res2](img\sql_res2.png)
+
+3.这里查询CS_AI方向的同学，可以看到李四已经输入到数据库中。
+
+![sql_res3](img\sql_res3.png)
+
+4.录入学生成绩
+
+![sql_res4](img\sql_res4.png)
+
+5.查询学生成绩
+
+![sql_res5](img\sql_res5.png)
+
+![sql_res6](img\sql_res6.png)
+
+6.查询学生被哪些老师教过课。
+
+![sql_res7](img\sql_res7.png)
+
+7.查询学生的开除情况。
+
+![sql_res8](img\sql_res8.png)
+
+8.查询某位学生是否被开除
+
+![sql_res9](img\sql_res9.png)
+
