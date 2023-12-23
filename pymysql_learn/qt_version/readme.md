@@ -42,7 +42,7 @@
 
 ## 四.ER图
 
-![](img\sql_ertu.png)
+![](sql_ertu.png)
 
 ## 五.具体实现
 
@@ -967,35 +967,35 @@ if __name__ == '__main__':
 
 1.初始界面
 
-![sql_res1](img\sql_res1.png)
+![sql_res1](sql_res1.png)
 
 2.这里输入的学生信息为21009200001，李四，22，男，CS_AI，由于我设置了输入成功后清屏以便于下一位同学的输入，所以输入消失了
 
-![sql_res2](img\sql_res2.png)
+![sql_res2](sql_res2.png)
 
 3.这里查询CS_AI方向的同学，可以看到李四已经输入到数据库中。
 
-![sql_res3](img\sql_res3.png)
+![sql_res3](sql_res3.png)
 
 4.录入学生成绩
 
-![sql_res4](img\sql_res4.png)
+![sql_res4](sql_res4.png)
 
 5.查询学生成绩
 
-![sql_res5](img\sql_res5.png)
+![sql_res5](sql_res5.png)
 
-![sql_res6](img\sql_res6.png)
+![sql_res6](sql_res6.png)
 
 6.查询学生被哪些老师教过课。
 
-![sql_res7](img\sql_res7.png)
+![sql_res7](sql_res7.png)
 
 7.查询学生的开除情况。
 
-![sql_res8](img\sql_res8.png)
+![sql_res8](sql_res8.png)
 
 8.查询某位学生是否被开除
 
-![sql_res9](img\sql_res9.png)
+![sql_res9](sql_res9.png)
 
