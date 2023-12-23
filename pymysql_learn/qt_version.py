@@ -271,21 +271,21 @@ class SearchStudentInfoWindow(QWidget):
             if sid:
                 sql = "select * from Student where Sid = '%s'" % sid
             elif department:
-                sql = "select * from Student,department where Sdept = '%s'" % department
+                sql = "select * from Student where Sdept = '%s'" % department
             else:
                 return
             cursor.execute(sql)
             result = cursor.fetchall()
-            result_list=[]
-            # for i in range(len(result)):
-            #     for j in range(len(result[i])-1):
-            #         result_list.append(result[i][j])
-            #     result_list.append()
-            #     result_list[i] = list(result[i])
-                # result_list[i][4] = Did_to_Dname[result[i][4]]
-            self.displayResults(result)
+            result_list = []
+            for i in range(len(result)):
+                result_list_temp = []
+                for j in range(len(result[i]) - 1):
+                    result_list_temp.append(result[i][j])
+                result_list_temp.append(Did_to_Dname[result[i][4]])
+                result_list.append(result_list_temp)
+            self.displayResults(result_list)
             self.sidInput.clear()
-            print(result)
+            print(result_list)
         except Exception as e:
             print("查询失败:", e)
         finally:
@@ -415,18 +415,18 @@ class QueryStudentCoursesWindow(QWidget):
             cursor.execute(sql)
             result = cursor.fetchall()
             list_result = list(result)
-            avg_grade= 0
+            avg_grade = 0
             for i in range(len(list_result)):
                 list_result[i] = list(list_result[i])
                 list_result[i][1] = Cid_to_Cname(cursor, list_result[i][1])
                 list_result[i][2] = Tid_to_Tname(cursor, list_result[i][2])
                 list_result[i][4] = '是' if list_result[i][4] == 1 else '否'
-                avg_grade=avg_grade+list_result[i][3]
+                avg_grade = avg_grade + list_result[i][3]
             if len(list_result) == 0:
                 list_result.append(['无', '无', '无', '无', '无'])
             self.displayResults(list_result)
             print(list_result)
-            self.resultavgLabel.setText("平均成绩为{:.2f}".format(avg_grade/len(list_result)))
+            self.resultavgLabel.setText("平均成绩为{:.2f}".format(avg_grade / len(list_result)))
         except Exception as e:
             print("查询失败:", e)
         finally:
