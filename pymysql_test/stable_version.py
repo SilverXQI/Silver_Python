@@ -69,6 +69,16 @@ def Sid_to_Sname(cursor, Sid):
         print("error:", e, '该生不存在')
         return None
 
+def Sname_to_Sid(cursor,Sname):
+    try:
+        sql = 'select Sid from Student where Sname="%s"' % Sname
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result[0][0]
+    except Exception as e:
+        print("error:", e, '该生不存在')
+        return None
+
 
 # 1.录入一位学生，应包含学号、姓名、性别、出生年月、班级等信息
 def add_student(cursor):
@@ -164,7 +174,7 @@ def query_student_grade(cursor):
         Sid = input("学号：")
     elif user_input == '2':
         Sname = input("姓名：")
-        Sid = Sid_to_Sname(cursor, Sname)
+        Sid = Sname_to_Sid(cursor, Sname)
     try:
         sql = "select Sid,Cname,Ctype,Ccredit,Grade from SC,course where Sid='%s' and SC.Cid=course.Cid" % Sid
         cursor.execute(sql)
