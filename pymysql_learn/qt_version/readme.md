@@ -40,11 +40,23 @@
 
 5.附部分数据示例，可以参考使用；但这些仅是一部分，仍需寻找或构造需要的数据
 
-## 四.ER图
+## 四.概念结构设计：ER图
 
 ![](sql_ertu.png)
 
-## 五.具体实现
+## 五.逻辑结构设计（关系模型）
+
+1.专业方向：Deparment（<u>Did</u>，Dname）
+
+2.学生：Student（<u>Sid</u>,Sname,Sage,Sdept,Dclass）
+
+3.课程：Course（<u>Cid</u>，Cname，Ccredit，Ctype，Cterm）
+
+4.教师：Teacher（<u>Tid</u>，Tname）
+
+5.选课：SC（<u>Sid，Cid</u>，Tid，Grade，IsPassed）
+
+## 六.具体实现
 
 ### 1.创建专业表
 
@@ -71,6 +83,8 @@ create table department(
 
 5.所在专业
 
+6.所在专业班级
+
 ```mysql
 create table student(
     Sid varchar(255) primary key,#学号
@@ -78,6 +92,7 @@ create table student(
     Ssex varchar(255) not null,#性别
     Sage int not null,#年龄
     Sdept varchar(255) not null,#所在系
+    Dclass varchar(255) not null,#专业班级
     foreign key(Sdept) references department(Did)#外键
 );
 ```
@@ -92,12 +107,15 @@ create table student(
 
 4.课程类型（必修，选修）
 
+5.开课学期
+
 ```mysql
 create table course(
     Cid varchar(255) primary key,#课程号
     Cname varchar(255) not null,#课程名
     Ccredit int not null,#学分
-    Ctype int check ( Ctype in (0, 1) ) not null#课程类型
+    Ctype int check ( Ctype in (0, 1) ) not null,#课程类型
+    Cterm varchar(255) not null#开课学期
 );
 ```
 
@@ -139,76 +157,12 @@ create table sc(
 );
 ```
 
-### 6.生成选课记录
-
-1.前四张基础信息表由自己创建获取
-
-2.选课记录为运算生成
-
-```python
-import pandas as pd
-
-# 读取 xlsx 文件到 DataFrame
-df = pd.read_excel('Data.xlsx', sheet_name='Student')
-
-# 打印 DataFrame 的内容
-# print(len(df))
-Sid = []
-Cid = []
-Tid = []
-Grade = []
-IsPassed = []
-for i in range(len(df)):
-    sid = df['Sid'][i]
-    sdept = df['Sdept'][i]
-    for i in range(17):
-        Sid.append(sid)
-        Cid.append(str(i + 1))
-        Tid.append(str(i+6675))
-        grade = random.randint(55, 100)
-        Grade.append(grade)
-        IsPassed.append(1 if grade >= 60 else 0)
-    if sdept == 'CS_SE':
-        Sid.append(sid)
-        Cid.append('18')
-        Tid.append('6692')
-        grade = random.randint(55, 100)
-        Grade.append(grade)
-        IsPassed.append(1 if grade>=60 else 0)
-    elif sdept == 'CS_AI':
-        Sid.append(sid)
-        Cid.append('19')
-        Tid.append('6693')
-        grade = random.randint(55, 100)
-        Grade.append(grade)
-        IsPassed.append(1 if grade >= 60 else 0)
-    elif sdept == 'CS_ES':
-        Sid.append(sid)
-        Cid.append('20')
-        Tid.append('6694')
-        grade = random.randint(55, 100)
-        Grade.append(grade)
-        IsPassed.append(1 if grade >= 60 else 0)
-    elif sdept == 'CS_NS':
-        Sid.append(sid)
-        Cid.append('21')
-        Tid.append('6695')
-        grade = random.randint(55, 100)
-        Grade.append(grade)
-        IsPassed.append(1 if grade >= 60 else 0)
-
-data = {'Sid': Sid, 'Cid': Cid, 'Tid': Tid, 'Grade': Grade, 'IsPassed': IsPassed}
-df = pd.DataFrame(data)
-df.to_excel("SC.xlsx", index=False)
-```
-
-### 7.函数代码
+### 6.函数代码
 
 #### （1）.数据库创建
 
 ```mysql
 create database if not exists StudentSystemTest;
-# select database(StudentSystemTest);
 create table department(
     Did varchar(255) primary key,
     Dname varchar(255) not null
@@ -220,6 +174,7 @@ create table student(
     Ssex varchar(255) not null,#性别
     Sage int not null,#年龄
     Sdept varchar(255) not null,#所在系
+    Dclass varchar(255) not null,#专业班级
     foreign key(Sdept) references department(Did)#外键
 );
 
@@ -227,7 +182,8 @@ create table course(
     Cid varchar(255) primary key,#课程号
     Cname varchar(255) not null,#课程名
     Ccredit int not null,#学分
-    Ctype int check ( Ctype in (0, 1) ) not null#课程类型
+    Ctype int check ( Ctype in (0, 1) ) not null,#课程类型
+    Cterm varchar(255) not null#开课学期
 );
 
 create table teacher(
@@ -255,7 +211,7 @@ create table sc(
 ```python
 import sys
 
-from PyQt5.QtGui import QPalette, QIcon
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 from pymysql import Connection
 
@@ -303,9 +259,9 @@ class StudentSystemApp():
     def __init__(self):
         super().__init__()
 
-    def add_student(self, cursor, Sid, Sname, Ssex, Sage, Sdept):
+    def add_student(self, cursor, Sid, Sname, Ssex, Sage, Sdept, Dclass):
         try:
-            sql = "insert into Student values ('%s','%s','%s','%s','%s')" % (Sid, Sname, Ssex, Sage, Sdept)
+            sql = "insert into Student values ('%s','%s','%s','%s','%s','%s')" % (Sid, Sname, Ssex, Sage, Sdept, Dclass)
             cursor.execute(sql)
             print("录入成功")
             return True
@@ -403,6 +359,7 @@ class EnterStudentInfoWindow(QWidget):
         self.ssexInput = QLineEdit(self)
         self.sageInput = QLineEdit(self)
         self.sdeptInput = QLineEdit(self)
+        self.dclassInput = QLineEdit(self)
         submitButton = QPushButton('录入学生信息', self)
         self.back_button = QPushButton('退出', self)
 
@@ -416,6 +373,8 @@ class EnterStudentInfoWindow(QWidget):
         layout.addWidget(self.sageInput)
         layout.addWidget(QLabel('专业:'))
         layout.addWidget(self.sdeptInput)
+        layout.addWidget(QLabel('专业班级:'))
+        layout.addWidget(self.dclassInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
         # 添加一个标签用于显示操作结果
@@ -445,8 +404,9 @@ class EnterStudentInfoWindow(QWidget):
         ssex = self.ssexInput.text()
         sage = self.sageInput.text()
         sdept = self.sdeptInput.text()
+        dclass = self.dclassInput.text()
 
-        res_flag = self.ssa.add_student(cursor, sid, sname, ssex, sage, sdept)
+        res_flag = self.ssa.add_student(cursor, sid, sname, ssex, sage, sdept, dclass)
         if res_flag:
             self.resultLabel.setText("录入成功")  # 设置标签文本为“录入成功”
             # 清空输入框以便下一次录入
@@ -455,6 +415,7 @@ class EnterStudentInfoWindow(QWidget):
             self.ssexInput.clear()
             self.sageInput.clear()
             self.sdeptInput.clear()
+            self.dclassInput.clear()
         else:
             self.resultLabel.setText("录入失败: 该生已存在")  # 设置标签文本为“录入失败”
 
@@ -490,8 +451,8 @@ class SearchStudentInfoWindow(QWidget):
         self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         # 创建表格
         self.resultsTable = QTableWidget(self)
-        self.resultsTable.setColumnCount(5)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
-        self.resultsTable.setHorizontalHeaderLabels(['学号', '姓名', '性别', '年龄', '专业'])
+        self.resultsTable.setColumnCount(6)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
+        self.resultsTable.setHorizontalHeaderLabels(['学号', '姓名', '性别', '年龄', '专业', '专业班级'])
         layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
@@ -534,9 +495,10 @@ class SearchStudentInfoWindow(QWidget):
             result_list = []
             for i in range(len(result)):
                 result_list_temp = []
-                for j in range(len(result[i]) - 1):
+                for j in range(len(result[i]) - 2):
                     result_list_temp.append(result[i][j])
                 result_list_temp.append(Did_to_Dname[result[i][4]])
+                result_list_temp.append(result[i][5])
                 result_list.append(result_list_temp)
             self.displayResults(result_list)
             self.sidInput.clear()
@@ -715,8 +677,8 @@ class QueryStudentTeachersWindow(QWidget):
         self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         # 创建表格
         self.resultsTable = QTableWidget(self)
-        self.resultsTable.setColumnCount(2)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
-        self.resultsTable.setHorizontalHeaderLabels(['教师', '课程名'])
+        self.resultsTable.setColumnCount(3)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
+        self.resultsTable.setHorizontalHeaderLabels(['教师', '课程名', '学期'])
         layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
@@ -735,14 +697,16 @@ class QueryStudentTeachersWindow(QWidget):
         conn.select_db(DataBase)
         sid = self.sidInput.text()
         try:
-            sql = "select Tname ,Cname from SC,Teacher,course where Sid='%s' and SC.Tid=Teacher.Tid and SC.Cid=course.Cid" % sid
+            sql = "select Tname ,Cname,Cterm from SC,Teacher,course where Sid='%s' and SC.Tid=Teacher.Tid and SC.Cid=course.Cid" % sid
             cursor.execute(sql)
             result = cursor.fetchall()
             list_result = list(result)
+            alb2han = {'1': '一', '2': '二', '3': '三', '4': '四'}
             for i in range(len(list_result)):
                 list_result[i] = list(list_result[i])
+                list_result[i][2] = '大%s%s学期' % (alb2han[list_result[i][2][0]], list_result[i][2][1])
             if len(list_result) == 0:
-                list_result.append(['无', '无'])
+                list_result.append(['无', '无', '无'])
             self.displayResults(list_result)
             print(list_result)
             # self.displayResults(result)
@@ -961,9 +925,36 @@ if __name__ == '__main__':
     main_app = MainApp()
     main_app.show()
     sys.exit(app.exec_())
+
 ```
 
-## 六.结果输出
+## 七.数据库
+
+### 数据展示
+
+1.Course
+
+![sql_sql1](sql_sql1.png)
+
+2.Department
+
+![sql_sql2](sql_sql2.png)
+
+3.SC
+
+![sql_sql3](sql_sql3.png)
+
+![sql_sql4](sql_sql4.png)
+
+4.Student
+
+![sql_sql5](sql_sql5.png)
+
+5.Teacher
+
+![sql_sql6](sql_sql6.png)
+
+## 八.结果输出
 
 1.初始界面
 

@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtGui import  QIcon
+from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 from pymysql import Connection
 
@@ -48,9 +48,9 @@ class StudentSystemApp():
     def __init__(self):
         super().__init__()
 
-    def add_student(self, cursor, Sid, Sname, Ssex, Sage, Sdept):
+    def add_student(self, cursor, Sid, Sname, Ssex, Sage, Sdept, Dclass):
         try:
-            sql = "insert into Student values ('%s','%s','%s','%s','%s')" % (Sid, Sname, Ssex, Sage, Sdept)
+            sql = "insert into Student values ('%s','%s','%s','%s','%s','%s')" % (Sid, Sname, Ssex, Sage, Sdept, Dclass)
             cursor.execute(sql)
             print("录入成功")
             return True
@@ -148,6 +148,7 @@ class EnterStudentInfoWindow(QWidget):
         self.ssexInput = QLineEdit(self)
         self.sageInput = QLineEdit(self)
         self.sdeptInput = QLineEdit(self)
+        self.dclassInput = QLineEdit(self)
         submitButton = QPushButton('录入学生信息', self)
         self.back_button = QPushButton('退出', self)
 
@@ -161,6 +162,8 @@ class EnterStudentInfoWindow(QWidget):
         layout.addWidget(self.sageInput)
         layout.addWidget(QLabel('专业:'))
         layout.addWidget(self.sdeptInput)
+        layout.addWidget(QLabel('专业班级:'))
+        layout.addWidget(self.dclassInput)
         layout.addWidget(submitButton)
         layout.addWidget(self.back_button)
         # 添加一个标签用于显示操作结果
@@ -190,8 +193,9 @@ class EnterStudentInfoWindow(QWidget):
         ssex = self.ssexInput.text()
         sage = self.sageInput.text()
         sdept = self.sdeptInput.text()
+        dclass = self.dclassInput.text()
 
-        res_flag = self.ssa.add_student(cursor, sid, sname, ssex, sage, sdept)
+        res_flag = self.ssa.add_student(cursor, sid, sname, ssex, sage, sdept, dclass)
         if res_flag:
             self.resultLabel.setText("录入成功")  # 设置标签文本为“录入成功”
             # 清空输入框以便下一次录入
@@ -200,6 +204,7 @@ class EnterStudentInfoWindow(QWidget):
             self.ssexInput.clear()
             self.sageInput.clear()
             self.sdeptInput.clear()
+            self.dclassInput.clear()
         else:
             self.resultLabel.setText("录入失败: 该生已存在")  # 设置标签文本为“录入失败”
 
@@ -235,8 +240,8 @@ class SearchStudentInfoWindow(QWidget):
         self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         # 创建表格
         self.resultsTable = QTableWidget(self)
-        self.resultsTable.setColumnCount(5)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
-        self.resultsTable.setHorizontalHeaderLabels(['学号', '姓名', '性别', '年龄', '专业'])
+        self.resultsTable.setColumnCount(6)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
+        self.resultsTable.setHorizontalHeaderLabels(['学号', '姓名', '性别', '年龄', '专业', '专业班级'])
         layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
@@ -279,9 +284,10 @@ class SearchStudentInfoWindow(QWidget):
             result_list = []
             for i in range(len(result)):
                 result_list_temp = []
-                for j in range(len(result[i]) - 1):
+                for j in range(len(result[i]) - 2):
                     result_list_temp.append(result[i][j])
                 result_list_temp.append(Did_to_Dname[result[i][4]])
+                result_list_temp.append(result[i][5])
                 result_list.append(result_list_temp)
             self.displayResults(result_list)
             self.sidInput.clear()
@@ -460,8 +466,8 @@ class QueryStudentTeachersWindow(QWidget):
         self.back_button.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         # 创建表格
         self.resultsTable = QTableWidget(self)
-        self.resultsTable.setColumnCount(2)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
-        self.resultsTable.setHorizontalHeaderLabels(['教师', '课程名'])
+        self.resultsTable.setColumnCount(3)  # 假设有5列数据：学号、姓名、性别、出生年月、班级
+        self.resultsTable.setHorizontalHeaderLabels(['教师', '课程名', '学期'])
         layout.addWidget(self.resultsTable)  # 将表格添加到布局中
         self.setLayout(layout)
         self.setWindowTitle('学生管理系统')
@@ -480,14 +486,16 @@ class QueryStudentTeachersWindow(QWidget):
         conn.select_db(DataBase)
         sid = self.sidInput.text()
         try:
-            sql = "select Tname ,Cname from SC,Teacher,course where Sid='%s' and SC.Tid=Teacher.Tid and SC.Cid=course.Cid" % sid
+            sql = "select Tname ,Cname,Cterm from SC,Teacher,course where Sid='%s' and SC.Tid=Teacher.Tid and SC.Cid=course.Cid" % sid
             cursor.execute(sql)
             result = cursor.fetchall()
             list_result = list(result)
+            alb2han = {'1': '一', '2': '二', '3': '三', '4': '四'}
             for i in range(len(list_result)):
                 list_result[i] = list(list_result[i])
+                list_result[i][2] = '大%s%s学期' % (alb2han[list_result[i][2][0]], list_result[i][2][1])
             if len(list_result) == 0:
-                list_result.append(['无', '无'])
+                list_result.append(['无', '无', '无'])
             self.displayResults(list_result)
             print(list_result)
             # self.displayResults(result)

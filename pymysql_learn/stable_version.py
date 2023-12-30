@@ -17,8 +17,8 @@ def import_init_data():
         # 读取 xlsx 文件到 DataFrame
         df = pd.read_excel('Data.xlsx', sheet_name='Course')
         for i in range(len(df)):
-            sql = "insert into Course values ('%s','%s','%s','%s')" % (
-                df['Cid'][i], df['Cname'][i], df['Ccredit'][i], df['Ctype'][i])
+            sql = "insert into Course values ('%s','%s','%s','%s','%s')" % (
+                df['Cid'][i], df['Cname'][i], df['Ccredit'][i], df['Ctype'][i], df['Cterm'][i])
             # print(sql)
             cursor.execute(sql)
         df = pd.read_excel('Data.xlsx', sheet_name='Department')
@@ -28,8 +28,8 @@ def import_init_data():
             cursor.execute(sql)
         df = pd.read_excel('Data.xlsx', sheet_name='Student')
         for i in range(len(df)):
-            sql = "insert into Student values ('%s','%s','%s','%s','%s')" % (
-                df['Sid'][i], df['Sname'][i], df['Ssex'][i], df['Sage'][i], df['Sdept'][i])
+            sql = "insert into Student values ('%s','%s','%s','%s','%s','%s')" % (
+                df['Sid'][i], df['Sname'][i], df['Ssex'][i], df['Sage'][i], df['Sdept'][i], df['Dclass'][i])
             # print(sql)
             cursor.execute(sql)
         df = pd.read_excel('Data.xlsx', sheet_name='Teacher')
@@ -79,8 +79,9 @@ def add_student(cursor):
     Ssex = input("性别：")
     Sage = input("年龄：")
     Sdept = input("专业：")
+    Dclass = input("专业班级：")
     try:
-        sql = "insert into Student values ('%s','%s','%s','%s','%s')" % (Sid, Sname, Ssex, Sage, Sdept)
+        sql = "insert into Student values ('%s','%s','%s','%s','%s','%s')" % (Sid, Sname, Ssex, Sage, Sdept, Dclass)
         cursor.execute(sql)
         print("录入成功")
     except Exception as e:
@@ -103,7 +104,7 @@ def query_student(cursor):
             result = cursor.fetchall()
             dname = Did_to_Dname(cursor, result[0][4])
             print('学号：', result[0][0], '姓名：', result[0][1], '性别：', result[0][2], '年龄：', result[0][3], '专业：',
-                  dname)
+                  dname, '专业班级：', result[0][5])
         except Exception as e:
             print("error:", e, '该生不存在')
     elif user_input == '2':
@@ -114,7 +115,7 @@ def query_student(cursor):
             result = cursor.fetchall()
             dname = Did_to_Dname(cursor, result[0][4])
             print('学号：', result[0][0], '姓名：', result[0][1], '性别：', result[0][2], '年龄：', result[0][3], '专业：',
-                  dname)
+                  dname, '专业班级：', result[0][5])
         except Exception as e:
             print("error:", e, '该生不存在')
     elif user_input == '3':
@@ -129,7 +130,7 @@ def query_student(cursor):
             result = cursor.fetchall()
             print(dname, ':', end='\n')
             for r in result:
-                print('学号：', r[0], '姓名：', r[1], '性别：', r[2], '年龄：', r[3])
+                print('学号：', r[0], '姓名：', r[1], '性别：', r[2], '年龄：', r[3],'专业班级：', r[5])
         except Exception as e:
             print("error:", e, '该生不存在')
     else:
@@ -166,7 +167,7 @@ def query_student_grade(cursor):
         Sname = input("姓名：")
         Sid = Sid_to_Sname(cursor, Sname)
     try:
-        sql = "select Sid,Cname,Ctype,Ccredit,Grade from SC,course where Sid='%s' and SC.Cid=course.Cid" % Sid
+        sql = "select Sid,Cname,Ctype,Ccredit,Grade,Cterm from SC,course where Sid='%s' and SC.Cid=course.Cid" % Sid
         cursor.execute(sql)
         result = cursor.fetchall()
         required_course_grade = 0
@@ -174,7 +175,8 @@ def query_student_grade(cursor):
         all_course_grade = 0
         all_course_credit = 0
         for r in result:
-            print('课程名：', r[1], '性质：', '必修' if r[2] == 1 else '选修', '学分：', r[3], '成绩：', r[4])
+            print('课程名：', r[1], '性质：', '必修' if r[2] == 1 else '选修', '学分：', r[3], '成绩：', r[4], '开课学期：大%s%s学期' % (
+                r[5][0], r[5][1]))
             if r[2] == 1:
                 required_course_grade += r[3] * r[4]
                 required_course_credit += r[3]
@@ -278,7 +280,7 @@ def UI():
 
 
 if __name__ == '__main__':
-    # import_init_data()
+    import_init_data()
     conn = Connection(
         host='localhost',  # 用户
         port=3306,  # 端口号
